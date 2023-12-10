@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Client</title>
+</head>
+<body>
+  <input type="text" id="messageInput" placeholder="Type a message">
+  <input type="text" id="clientName" placeholder="Client Id">
+  <button onclick="sendMessage()">Send</button>
+  
+  <script>
+    const socket = new WebSocket("ws://localhost:8080/ws?clientId=1");
+
+    socket.onopen = () => {
+      console.log("WebSocket connection opened");
+    };
+
+    socket.onmessage = (event) => {
+      console.log("Received message:", event.data);
+    };
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    function sendMessage() {
+      const messageInput = document.getElementById("messageInput");
+      const clientName = document.getElementById("clientName");
+      const message = messageInput.value;
+      const client = clientName.value;
+
+      requestObj = {
+        "message": message,
+        "recepient": client
+      }
+      const jsonString = JSON.stringify(requestObj);
+
+      if (message.trim() !== "") {
+        socket.send(jsonString);
+        messageInput.value = "";
+        clientName.value = "";
+      } else {
+        alert("Please enter a message");
+      }
+    }
+  </script>
+</body>
+</html>
